@@ -12,14 +12,14 @@
 - `users` (nombre, email, password, activo)
 - `sucursal_user` (user_id, sucursal_id)
 - `roles`, `permissions`, `model_has_roles`: con spatie/laravel-permission en **modo teams**, donde el *team* es la sucursal (`team_id` = `sucursal_id`). Así un usuario puede tener un rol distinto en cada sucursal. Se activa desde la primera migración.
-- `parametros` (clave, valor): multi-sucursal, stock negativo, facturación
+- `parametros` (clave, valor): multi-sucursal, stock negativo, facturación, `usar_talles` ("Usar talles en productos", habilitado por defecto)
 - `auditorias` (user_id, accion, modelo, modelo_id, antes, despues, ip, dispositivo)
 
 ## Catálogo
-- `categorias` (botas, sandalias, zapatos, zapatillas), `marcas`, `temporadas`, `colores`
+- `categorias` (ABM; las de calzado —botas, sandalias, zapatos, zapatillas— son datos de ejemplo opcionales), `marcas`, `temporadas`, `colores`
 - `alicuotas_iva` (nombre, porcentaje)
 - `productos` (nombre, categoria_id, marca_id, temporada_id, alicuota_iva_id, activo)
-- `variantes` (producto_id, color_id, **talle**, **sku** único, codigo_barras único, costo, **precio_final**, activo). Única por producto, color y talle. El precio de la lista base es el precio final con IVA; el neto se calcula.
+- `variantes` (producto_id, color_id, **talle** nullable, `talle_clave` generada, **sku** único, codigo_barras único, costo, **precio_final**, activo). Única por `(producto_id, color_id, talle_clave)`. El color es obligatorio (existe el color "Único"). El precio de la lista base es el precio final con IVA; el neto se calcula.
 - `listas_precio` (nombre, es_base, activa)
 - `lista_precio_items` (lista_precio_id, variante_id, precio_final). Única por lista y variante. Si una variante no figura en la lista, se usa el precio base.
 - `producto_fotos` (producto_id, color_id nullable, ruta, ruta_miniatura, es_principal, orden, ancho, alto, bytes). Hasta 10 por producto, una principal. Los archivos se guardan en el disco privado y se sirven con control de acceso; el navegador los achica antes de subirlos.
@@ -38,7 +38,7 @@
 - `pagos_proveedor` (sucursal_id, proveedor_id, fecha, medio_pago_id, importe, caja_sesion_id, user_id, dispositivo) e `imputaciones_pago_proveedor` (pago_id, factura_id, importe)
 
 ## Clientes y vendedores
-- `clientes` (nombre, dni_cuit, telefono, email, talle_habitual, condicion_iva)
+- `clientes` (nombre, dni_cuit, telefono, email, talle_habitual opcional, condicion_iva). `talle_habitual` se muestra solo si el parámetro de talles está habilitado.
 - `vendedores` (user_id, activo)
 - `metas_vendedor` (vendedor_id, periodo, monto)
 - `reglas_comision` (vendedor_id o categoria_id, porcentaje, escala_json)
@@ -81,6 +81,7 @@
 ## Decisiones de diseño
 - Venta, stock y caja se registran en **una sola transacción** con `lockForUpdate` sobre `stock`. El bloqueo mantiene el saldo consistente ante ventas simultáneas; si el parámetro de stock negativo está desactivado, además impide la sobreventa.
 - Saldos cacheados (`stock.cantidad`, `cuentas_corrientes.saldo`) se recalculan desde los movimientos. Los movimientos son la fuente de verdad.
-- **Precio final como dato maestro:** se fija el precio final con IVA (lo que ve la clienta) y se calculan neto e IVA a partir de él. Los items guardan precio final, neto, alícuota, IVA y costo del momento, así los reportes de margen no cambian si luego se actualizan precios.
+- **Precio final como dato maestro:** se fija el precio final con IVA (lo que ve el cliente) y se calculan neto e IVA a partir de él. Los items guardan precio final, neto, alícuota, IVA y costo del momento, así los reportes de margen no cambian si luego se actualizan precios.
+- **Talle opcional en variantes:** `variantes.talle` es nullable (NULL = sin talle). Como un índice único admite varios NULL, se agrega la columna generada almacenada `talle_clave = COALESCE(talle, '')` y la unicidad es `(producto_id, color_id, talle_clave)`. El parámetro `usar_talles` ("Usar talles en productos") solo decide qué muestra y exige la interfaz: cambiarlo no modifica ni borra datos, y una variante existente se muestra con su talle si lo tiene.
 - **El recargo por cuotas integra el total gravado:** se distribuye entre los items y se le aplica la alícuota de IVA de cada uno, de modo que el comprobante cierre igual cuando se habilite ARCA.
 - Índices en `(sucursal_id, fecha)` en todas las tablas operativas, y además en `variante_id`, `vendedor_id`, `cliente_id` y `codigo_barras`.

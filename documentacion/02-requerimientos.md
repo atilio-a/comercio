@@ -7,11 +7,12 @@ Prioridad: **A** = alta (MVP) · **M** = media · **B** = baja (fase posterior)
 ### Catálogo (CAT)
 | ID | Prio | Descripción |
 |----|------|-------------|
-| CAT-01 | A | Productos por categoría (botas, sandalias, zapatos, zapatillas), marca y temporada. |
-| CAT-02 | A | Variantes talle + color, cada una con SKU y código de barras/QR propio. |
+| CAT-01 | A | Productos por categoría, marca y temporada. Las categorías son configurables (ABM); las de calzado (botas, sandalias, zapatos, zapatillas) son datos de ejemplo. |
+| CAT-02 | A | Variantes por color y, si el parámetro de talles está habilitado, por talle; cada una con SKU y código de barras/QR propio. |
 | CAT-03 | A | Costo, precio final con IVA y alícuota; neto e IVA discriminados se calculan desde el precio final. |
 | CAT-04 | M | Fotos por producto. |
 | CAT-05 | M | Listas de precios con precio final por variante; la variante que no figura en la lista toma el precio base. |
+| CAT-06 | A | Parámetro "Usar talles en productos" habilitable/deshabilitable por el Administrador; deshabilitado oculta el talle en catálogo, venta, clientes y reportes sin borrar datos. |
 
 ### Compras (COM)
 | ID | Prio | Descripción |
@@ -24,7 +25,7 @@ Prioridad: **A** = alta (MVP) · **M** = media · **B** = baja (fase posterior)
 ### Ventas (VEN)
 | ID | Prio | Descripción |
 |----|------|-------------|
-| VEN-01 | A | Venta rápida desde el celular (búsqueda o escaneo, talle y color). |
+| VEN-01 | A | Venta rápida desde el celular (búsqueda o escaneo, talle, si está habilitado, y color). |
 | VEN-02 | A | Pagos combinados, descuentos con autorización (se registra quién autorizó, por venta y por item) y promociones (se registra qué promoción se aplicó a cada item). |
 | VEN-03 | A | Cambios y devoluciones con nota de crédito o saldo a favor. El saldo a favor se acredita en la cuenta corriente del cliente, que se crea sin crédito habilitado si no existía. |
 | VEN-04 | A | Comprobante interno (PDF/ticket) rotulado "Documento no válido como factura". |
@@ -45,7 +46,7 @@ Prioridad: **A** = alta (MVP) · **M** = media · **B** = baja (fase posterior)
 ### Clientes y vendedores (CLI / VND)
 | ID | Prio | Descripción |
 |----|------|-------------|
-| CLI-01 | A | Ficha con contacto, talle habitual e historial. |
+| CLI-01 | A | Ficha con contacto, talle habitual (si está habilitado) e historial. |
 | CLI-02 | A | Cuenta corriente con límite de crédito y bloqueo por mora. |
 | CLI-03 | M | Cuotas propias con cronograma, interés y punitorios. |
 | CLI-04 | M | Estado de cuenta por WhatsApp o PDF y recordatorios. |
@@ -74,7 +75,7 @@ Prioridad: **A** = alta (MVP) · **M** = media · **B** = baja (fase posterior)
 | REP-01 | A | Ventas por vendedor, período, producto, categoría y medio de pago. |
 | REP-02 | A | Kardex, stock valorizado y stock bajo mínimo. |
 | REP-03 | A | Cierre de caja, cuentas corrientes y morosidad por antigüedad. |
-| REP-04 | M | Rotación, curva de talles, márgenes y diferencias de inventario. |
+| REP-04 | M | Rotación, curva de talles (si está habilitado), márgenes y diferencias de inventario. |
 | REP-05 | M | Exportación a PDF, Excel y CSV, y tablero de inicio por rol. |
 
 ## Requerimientos no funcionales
@@ -86,7 +87,7 @@ Prioridad: **A** = alta (MVP) · **M** = media · **B** = baja (fase posterior)
 | RNF-09 | A | Toda operación guarda fecha de negocio (`fecha`) y momento de registro (`created_at`); las de dinero, además, usuario y dispositivo. |
 | RNF-04 | A | Seguridad: hash de contraseñas, CSRF/XSS, HTTPS y backups automáticos. |
 | RNF-05 | A | Venta en menos de 2 s, con índices en las consultas de reportes. |
-| RNF-06 | A | Modelo multi-sucursal desde el inicio; sucursales múltiples, facturación y stock negativo configurables. |
+| RNF-06 | A | Modelo multi-sucursal desde el inicio; sucursales múltiples, facturación, stock negativo y talles en productos configurables. |
 | RNF-07 | M | Facturación ARCA desacoplada mediante la interfaz `EmisorComprobante`. |
 | RNF-08 | M | Integración posterior con API de Mercado Pago. |
 

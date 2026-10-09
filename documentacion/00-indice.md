@@ -1,6 +1,6 @@
-# Sistema de gestión para zapatería de dama — Documentación de análisis
+# Sistema de gestión para comercio minorista — Documentación de análisis
 
-Sistema web mobile-first para la gestión integral de un comercio de calzado femenino (botas, sandalias, zapatos y zapatillas).
+Sistema web mobile-first para la gestión integral de un comercio minorista. El caso de uso principal es un comercio de calzado (botas, sandalias, zapatos y zapatillas), que trabaja con talles; el uso de talles es configurable con el parámetro "Usar talles en productos", de modo que el sistema también sirve a comercios que no los manejan (por ejemplo, regalería, librería o bazar).
 
 **Stack:** Laravel 12 · LAMP (PHP + MySQL/MariaDB) · Tailwind CSS
 

@@ -9,8 +9,8 @@ Objetivo: reemplazar la operación diaria de venta y caja.
 
 | Módulo | Requerimientos |
 |--------|----------------|
-| Base | Sucursal única, usuarios, roles y permisos por sucursal, parámetros, auditoría (USR-01, USR-02, USR-03, RNF-01 a RNF-06, RNF-09) |
-| Catálogo | Productos, variantes, códigos, precio final con IVA y fotos por producto (CAT-01, CAT-02, CAT-03, CAT-04) |
+| Base | Sucursal única, usuarios, roles y permisos por sucursal, parámetros (incluido el parámetro de talles), auditoría (USR-01, USR-02, USR-03, RNF-01 a RNF-06, RNF-09) |
+| Catálogo | Productos, variantes, códigos, precio final con IVA y fotos por producto (CAT-01, CAT-02, CAT-03, CAT-04, CAT-06) |
 | Stock | Stock por variante, kardex, ajustes, venta con stock negativo configurable (STK-01, STK-02, VEN-09) |
 | Compras | Proveedores y recepción de mercadería para cargar stock (COM-01, COM-02) |
 | Ventas | Venta rápida con escaneo, pagos combinados, descuentos autorizados, comprobante interno, puntos de venta, recargo de tarjeta, anulación por reversión (VEN-01, VEN-02 sin promociones, VEN-04, VEN-05, VEN-07, VEN-08) |
@@ -21,7 +21,7 @@ Objetivo: reemplazar la operación diaria de venta y caja.
 
 Las fotos por producto (CAT-04) se adelantaron desde la Fase 3 a pedido del usuario, para identificar los productos desde el celular.
 
-Los cambios y devoluciones entran en esta fase porque los cambios de talle son frecuentes en calzado. VEN-05 entra acá aunque su prioridad sigue en revisión (ver temas abiertos).
+Los cambios y devoluciones entran en esta fase porque los cambios de talle son frecuentes en calzado (aplica a comercios que usan talles; en el resto, los cambios son por color o producto). VEN-05 entra acá aunque su prioridad sigue en revisión (ver temas abiertos).
 
 ## Fase 2 — Crédito a clientes e inventario
 | Módulo | Requerimientos |

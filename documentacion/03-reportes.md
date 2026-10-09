@@ -5,8 +5,8 @@ Todos los reportes tienen filtros por **período, sucursal, vendedor, categoría
 ## Ventas
 - **Por vendedor:** cantidad de ventas, unidades, monto, ticket promedio, descuentos otorgados, devoluciones y comisión calculada. Incluye ranking y avance contra meta.
 - **Por período:** diario, semanal, mensual, con comparativo contra el período anterior.
-- **Por producto, talle y color:** qué se vende más y qué talles se agotan primero.
-- **Por categoría y marca:** botas, sandalias, zapatos, zapatillas.
+- **Por producto, talle y color:** qué se vende más y qué talles se agotan primero. El talle (columna y filtro) aparece solo si el parámetro "Usar talles en productos" está habilitado; si no, se agrupa por producto y color.
+- **Por categoría y marca:** según las categorías configuradas (por ejemplo, botas, sandalias, zapatos y zapatillas en un comercio de calzado).
 - **Por medio de pago.**
 - **Por cliente:** historial y mejores clientes.
 - **Cambios y devoluciones:** motivo, producto y vendedor.
@@ -19,7 +19,7 @@ Todos los reportes tienen filtros por **período, sucursal, vendedor, categoría
 - **Rotación y productos sin movimiento:** días de stock y mercadería inmovilizada.
 - **Diferencias de inventario físico:** conteo contra sistema.
 - **Ajustes de stock:** quién los hizo y por qué.
-- **Curva de talles:** distribución de stock contra distribución de ventas.
+- **Curva de talles:** distribución de stock contra distribución de ventas. Solo se ofrece si el parámetro "Usar talles en productos" está habilitado; las variantes sin talle se agrupan como "Sin talle".
 
 ## Compras y proveedores
 - Compras por proveedor y período.

@@ -4,7 +4,7 @@
 Gestionar el comercio: compras, ventas, stock, control de inventario, clientes y vendedores, con acceso desde el celular y gestión de usuarios y roles.
 
 ## Alcance funcional
-- Catálogo de productos con variantes talle + color.
+- Catálogo de productos con variantes por color y, opcionalmente, talle (configurable).
 - Compras a proveedores y recepción de mercadería.
 - Ventas rápidas desde el celular, cambios y devoluciones.
 - Stock por variante, movimientos e inventario físico.
@@ -44,7 +44,7 @@ Hoy solo comprobantes internos (ticket/PDF no fiscal). Para habilitar ARCA sin r
 - Los comprobantes internos se rotulan **"Documento no válido como factura"**.
 
 ## Requerimientos no funcionales derivados
-- **Extensibilidad:** configuración por parámetros (sucursales múltiples, facturación, stock negativo) sin tocar código.
+- **Extensibilidad:** configuración por parámetros (sucursales múltiples, facturación, stock negativo, talles en productos) sin tocar código.
 - **Trazabilidad:** toda venta anulada conserva su registro; no se borra, se revierte. Cada operación guarda su fecha de negocio y su momento de registro, y las de dinero, además, el usuario y el dispositivo.
 - **Auditoría fiscal futura:** los datos del comprobante son inmutables una vez emitidos.
 
