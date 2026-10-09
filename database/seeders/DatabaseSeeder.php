@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -10,14 +9,17 @@ class DatabaseSeeder extends Seeder
 {
     /**
      * Seed the application's database.
+     *
+     * Los seeders son idempotentes: se pueden volver a ejecutar sin duplicar datos
+     * ni pisar valores elegidos por el Administrador. No crean usuarios: el primer
+     * Administrador se crea con `php artisan comercio:crear-administrador`.
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $this->call([
+            SucursalSeeder::class,
+            RolesYPermisosSeeder::class,
+            ParametroSeeder::class,
         ]);
     }
 }

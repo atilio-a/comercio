@@ -8,12 +8,12 @@ use Tests\TestCase;
 class ExampleTest extends TestCase
 {
     /**
-     * A basic test example.
+     * La raíz no es pública: lleva al tablero, que pide iniciar sesión.
      */
-    public function test_the_application_returns_a_successful_response(): void
+    public function test_the_root_redirects_guests_to_the_login_screen(): void
     {
-        $response = $this->get('/');
+        $this->get('/')->assertRedirect('/dashboard');
 
-        $response->assertStatus(200);
+        $this->get('/dashboard')->assertRedirect('/login');
     }
 }

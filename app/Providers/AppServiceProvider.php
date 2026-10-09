@@ -2,6 +2,13 @@
 
 namespace App\Providers;
 
+use App\Enums\Parametro;
+use App\Enums\Rol;
+use App\Models\User;
+use App\Services\Parametros;
+use App\Services\SucursalActiva;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +18,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->scoped(SucursalActiva::class);
+        $this->app->singleton(Parametros::class);
     }
 
     /**
@@ -19,6 +27,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // The Administrador role has every permission in its active branch, including future ones.
+        Gate::before(function (User $user): ?bool {
+            return $user->hasRole(Rol::Administrador->value) ? true : null;
+        });
+
+        View::composer('layouts.navigation', function (\Illuminate\View\View $view) {
+            $view->with([
+                'multiSucursal' => app(Parametros::class)->habilitado(Parametro::MultiSucursal),
+                'sucursalActiva' => app(SucursalActiva::class)->sucursal(),
+            ]);
+        });
     }
 }

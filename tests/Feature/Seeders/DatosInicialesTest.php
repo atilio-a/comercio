@@ -1,0 +1,55 @@
+<?php
+
+namespace Tests\Feature\Seeders;
+
+use App\Enums\Permiso;
+use App\Enums\Rol;
+use App\Models\Sucursal;
+use App\Models\User;
+use Database\Seeders\DatabaseSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+use Tests\TestCase;
+
+class DatosInicialesTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function test_initial_data_creates_the_main_branch_roles_and_permissions(): void
+    {
+        $this->seed(DatabaseSeeder::class);
+
+        $this->assertSame([Sucursal::PRINCIPAL], Sucursal::activas()->pluck('nombre')->all());
+        $this->assertEqualsCanonicalizing(
+            array_column(Rol::cases(), 'value'),
+            Role::whereNull('team_id')->pluck('name')->all(),
+        );
+        $this->assertEqualsCanonicalizing(
+            array_column(Permiso::cases(), 'value'),
+            Permission::pluck('name')->all(),
+        );
+        $this->assertEqualsCanonicalizing(
+            ['usuarios.ver', 'auditoria.ver'],
+            Role::findByName(Rol::Gerente->value)->permissions->pluck('name')->all(),
+        );
+        $this->assertSame(0, Role::findByName(Rol::Vendedor->value)->permissions()->count());
+    }
+
+    public function test_initial_data_can_be_seeded_twice_without_duplicates(): void
+    {
+        $this->seed(DatabaseSeeder::class);
+        $this->seed(DatabaseSeeder::class);
+
+        $this->assertSame(1, Sucursal::count());
+        $this->assertSame(count(Rol::cases()), Role::count());
+        $this->assertSame(count(Permiso::cases()), Permission::count());
+    }
+
+    public function test_initial_data_does_not_create_users(): void
+    {
+        $this->seed(DatabaseSeeder::class);
+
+        $this->assertSame(0, User::count());
+    }
+}
