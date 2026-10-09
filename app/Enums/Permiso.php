@@ -11,4 +11,8 @@ enum Permiso: string
     case UsuariosGestionar = 'usuarios.gestionar';
     case ParametrosEditar = 'parametros.editar';
     case AuditoriaVer = 'auditoria.ver';
+    case CatalogoVer = 'catalogo.ver';
+    case CatalogoGestionar = 'catalogo.gestionar';
+    case StockVer = 'stock.ver';
+    case StockAjustar = 'stock.ajustar';
 }

@@ -22,7 +22,7 @@
 - `variantes` (producto_id, color_id, **talle**, **sku** único, codigo_barras único, costo, **precio_final**, activo). Única por producto, color y talle. El precio de la lista base es el precio final con IVA; el neto se calcula.
 - `listas_precio` (nombre, es_base, activa)
 - `lista_precio_items` (lista_precio_id, variante_id, precio_final). Única por lista y variante. Si una variante no figura en la lista, se usa el precio base.
-- `producto_fotos` (producto_id, ruta)
+- `producto_fotos` (producto_id, color_id nullable, ruta, ruta_miniatura, es_principal, orden, ancho, alto, bytes). Hasta 10 por producto, una principal. Los archivos se guardan en el disco privado y se sirven con control de acceso; el navegador los achica antes de subirlos.
 
 ## Stock
 - `stock` (variante_id, sucursal_id, cantidad, minimo). Única por variante y sucursal. `cantidad` puede ser negativa si el parámetro lo permite.

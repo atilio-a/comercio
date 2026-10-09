@@ -15,6 +15,21 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    @can('catalogo.ver')
+                        <x-nav-link :href="route('catalogo.productos.index')" :active="request()->routeIs('catalogo.productos.*')">
+                            Catálogo
+                        </x-nav-link>
+                    @endcan
+                    @can('stock.ver')
+                        <x-nav-link :href="route('stock.index')" :active="request()->routeIs('stock.*')">
+                            Stock
+                        </x-nav-link>
+                    @endcan
+                    @can('catalogo.gestionar')
+                        <x-nav-link :href="route('catalogo.maestros.index', App\Enums\TablaMaestra::Categorias)" :active="request()->routeIs('catalogo.maestros.*', 'catalogo.alicuotas.*')">
+                            Tablas
+                        </x-nav-link>
+                    @endcan
                     @can('viewAny', App\Models\User::class)
                         <x-nav-link :href="route('usuarios.index')" :active="request()->routeIs('usuarios.*')">
                             Usuarios
@@ -91,6 +106,21 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            @can('catalogo.ver')
+                <x-responsive-nav-link :href="route('catalogo.productos.index')" :active="request()->routeIs('catalogo.productos.*')">
+                    Catálogo
+                </x-responsive-nav-link>
+            @endcan
+            @can('stock.ver')
+                <x-responsive-nav-link :href="route('stock.index')" :active="request()->routeIs('stock.*')">
+                    Stock
+                </x-responsive-nav-link>
+            @endcan
+            @can('catalogo.gestionar')
+                <x-responsive-nav-link :href="route('catalogo.maestros.index', App\Enums\TablaMaestra::Categorias)" :active="request()->routeIs('catalogo.maestros.*', 'catalogo.alicuotas.*')">
+                    Tablas del catálogo
+                </x-responsive-nav-link>
+            @endcan
             @can('viewAny', App\Models\User::class)
                 <x-responsive-nav-link :href="route('usuarios.index')" :active="request()->routeIs('usuarios.*')">
                     Usuarios

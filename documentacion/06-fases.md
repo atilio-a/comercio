@@ -10,7 +10,7 @@ Objetivo: reemplazar la operación diaria de venta y caja.
 | Módulo | Requerimientos |
 |--------|----------------|
 | Base | Sucursal única, usuarios, roles y permisos por sucursal, parámetros, auditoría (USR-01, USR-02, USR-03, RNF-01 a RNF-06, RNF-09) |
-| Catálogo | Productos, variantes, códigos, precio final con IVA (CAT-01, CAT-02, CAT-03) |
+| Catálogo | Productos, variantes, códigos, precio final con IVA y fotos por producto (CAT-01, CAT-02, CAT-03, CAT-04) |
 | Stock | Stock por variante, kardex, ajustes, venta con stock negativo configurable (STK-01, STK-02, VEN-09) |
 | Compras | Proveedores y recepción de mercadería para cargar stock (COM-01, COM-02) |
 | Ventas | Venta rápida con escaneo, pagos combinados, descuentos autorizados, comprobante interno, puntos de venta, recargo de tarjeta, anulación por reversión (VEN-01, VEN-02 sin promociones, VEN-04, VEN-05, VEN-07, VEN-08) |
@@ -18,6 +18,8 @@ Objetivo: reemplazar la operación diaria de venta y caja.
 | Clientes y vendedores | Ficha básica de cliente y ventas por vendedor (CLI-01, VND-01) |
 | Caja | Medios de pago, apertura, arqueo, cierre, egresos e ingresos, contraasientos (CAJ-01, CAJ-02, CAJ-03, CAJ-05) |
 | Reportes | Cierre de caja, ventas por vendedor y período, stock actual y kardex (parte de REP-01, REP-02, REP-03) |
+
+Las fotos por producto (CAT-04) se adelantaron desde la Fase 3 a pedido del usuario, para identificar los productos desde el celular.
 
 Los cambios y devoluciones entran en esta fase porque los cambios de talle son frecuentes en calzado. VEN-05 entra acá aunque su prioridad sigue en revisión (ver temas abiertos).
 
@@ -39,7 +41,6 @@ Los cambios y devoluciones entran en esta fase porque los cambios de talle son f
 | Stock | Alertas de stock mínimo y reposición (STK-04) |
 | Compras | Cuenta corriente de proveedores (COM-03) |
 | Caja | Conciliación de tarjetas y QR (CAJ-04) |
-| Catálogo | Fotos por producto (CAT-04) |
 | Reportes | Rotación, curva de talles, márgenes, exportación a PDF, Excel y CSV (REP-04, REP-05) |
 
 ## Fase 4 — Integraciones y crecimiento

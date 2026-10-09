@@ -30,10 +30,22 @@ class DatosInicialesTest extends TestCase
             Permission::pluck('name')->all(),
         );
         $this->assertEqualsCanonicalizing(
-            ['usuarios.ver', 'auditoria.ver'],
+            ['usuarios.ver', 'auditoria.ver', 'catalogo.ver', 'catalogo.gestionar', 'stock.ver', 'stock.ajustar'],
             Role::findByName(Rol::Gerente->value)->permissions->pluck('name')->all(),
         );
-        $this->assertSame(0, Role::findByName(Rol::Vendedor->value)->permissions()->count());
+
+        foreach ([Rol::Vendedor, Rol::Cajero] as $rol) {
+            $this->assertEqualsCanonicalizing(
+                ['catalogo.ver', 'stock.ver'],
+                Role::findByName($rol->value)->permissions->pluck('name')->all(),
+                $rol->value,
+            );
+        }
+
+        $this->assertEqualsCanonicalizing(
+            ['catalogo.ver', 'stock.ver', 'stock.ajustar'],
+            Role::findByName(Rol::Deposito->value)->permissions->pluck('name')->all(),
+        );
     }
 
     public function test_initial_data_can_be_seeded_twice_without_duplicates(): void

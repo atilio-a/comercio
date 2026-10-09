@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Enums\Parametro;
 use App\Enums\Rol;
+use App\Enums\TablaMaestra;
 use App\Models\Sucursal;
 use App\Models\User;
 use App\Services\Parametros;
@@ -53,6 +54,43 @@ class NavegacionTest extends TestCase
             ->assertSee(route('usuarios.index'))
             ->assertSee(route('auditoria.index'))
             ->assertDontSee(route('parametros.edit'));
+    }
+
+    public function test_catalog_entries_depend_on_catalog_permissions(): void
+    {
+        $tablas = route('catalogo.maestros.index', TablaMaestra::Categorias);
+
+        foreach ([Rol::Vendedor, Rol::Cajero, Rol::Deposito] as $rol) {
+            $user = User::factory()->conSucursal(rol: $rol)->create();
+
+            $this->actingAs($user)->get('/dashboard')
+                ->assertOk()
+                ->assertSee(route('catalogo.productos.index'))
+                ->assertDontSee($tablas);
+        }
+
+        $gerente = User::factory()->conSucursal(rol: Rol::Gerente)->create();
+        $this->actingAs($gerente)->get('/dashboard')
+            ->assertOk()
+            ->assertSee(route('catalogo.productos.index'))
+            ->assertSee($tablas);
+
+        $sinRol = User::factory()->conSucursal()->create();
+        $this->actingAs($sinRol)->get('/dashboard')
+            ->assertOk()
+            ->assertDontSee(route('catalogo.productos.index'));
+    }
+
+    public function test_stock_entry_depends_on_stock_permission(): void
+    {
+        foreach ([Rol::Vendedor, Rol::Cajero, Rol::Deposito, Rol::Gerente] as $rol) {
+            $user = User::factory()->conSucursal(rol: $rol)->create();
+
+            $this->actingAs($user)->get('/dashboard')->assertOk()->assertSee(route('stock.index'));
+        }
+
+        $sinRol = User::factory()->conSucursal()->create();
+        $this->actingAs($sinRol)->get('/dashboard')->assertOk()->assertDontSee(route('stock.index'));
     }
 
     public function test_branch_selector_is_hidden_while_multi_branch_is_disabled(): void

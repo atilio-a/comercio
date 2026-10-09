@@ -22,8 +22,16 @@ enum Rol: string
     {
         return match ($this) {
             self::Administrador => Permiso::cases(),
-            self::Gerente => [Permiso::UsuariosVer, Permiso::AuditoriaVer],
-            self::Vendedor, self::Cajero, self::Deposito => [],
+            self::Gerente => [
+                Permiso::UsuariosVer,
+                Permiso::AuditoriaVer,
+                Permiso::CatalogoVer,
+                Permiso::CatalogoGestionar,
+                Permiso::StockVer,
+                Permiso::StockAjustar,
+            ],
+            self::Deposito => [Permiso::CatalogoVer, Permiso::StockVer, Permiso::StockAjustar],
+            self::Vendedor, self::Cajero => [Permiso::CatalogoVer, Permiso::StockVer],
         };
     }
 }

@@ -20,6 +20,8 @@ class DatabaseSeeder extends Seeder
             SucursalSeeder::class,
             RolesYPermisosSeeder::class,
             ParametroSeeder::class,
+            AlicuotaIvaSeeder::class,
+            ColorSeeder::class,
         ]);
     }
 }
