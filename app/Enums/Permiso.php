@@ -15,4 +15,7 @@ enum Permiso: string
     case CatalogoGestionar = 'catalogo.gestionar';
     case StockVer = 'stock.ver';
     case StockAjustar = 'stock.ajustar';
+    case CajaOperar = 'caja.operar';
+    case CajaSupervisar = 'caja.supervisar';
+    case CajaConfigurar = 'caja.configurar';
 }

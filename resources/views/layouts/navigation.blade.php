@@ -25,6 +25,21 @@
                             Stock
                         </x-nav-link>
                     @endcan
+                    @can('caja.operar')
+                        <x-nav-link :href="route('caja.mi-caja')" :active="request()->routeIs('caja.mi-caja', 'caja.cierre.*')">
+                            Caja
+                        </x-nav-link>
+                    @endcan
+                    @can('caja.supervisar')
+                        <x-nav-link :href="route('caja.sesiones.index')" :active="request()->routeIs('caja.sesiones.*')">
+                            Sesiones
+                        </x-nav-link>
+                    @endcan
+                    @can('caja.configurar')
+                        <x-nav-link :href="route('caja.medios-pago.index')" :active="request()->routeIs('caja.medios-pago.*', 'caja.cajas.*')">
+                            Medios de pago
+                        </x-nav-link>
+                    @endcan
                     @can('catalogo.gestionar')
                         <x-nav-link :href="route('catalogo.maestros.index', App\Enums\TablaMaestra::Categorias)" :active="request()->routeIs('catalogo.maestros.*', 'catalogo.alicuotas.*')">
                             Tablas
@@ -114,6 +129,21 @@
             @can('stock.ver')
                 <x-responsive-nav-link :href="route('stock.index')" :active="request()->routeIs('stock.*')">
                     Stock
+                </x-responsive-nav-link>
+            @endcan
+            @can('caja.operar')
+                <x-responsive-nav-link :href="route('caja.mi-caja')" :active="request()->routeIs('caja.mi-caja', 'caja.cierre.*')">
+                    Caja
+                </x-responsive-nav-link>
+            @endcan
+            @can('caja.supervisar')
+                <x-responsive-nav-link :href="route('caja.sesiones.index')" :active="request()->routeIs('caja.sesiones.*')">
+                    Sesiones de caja
+                </x-responsive-nav-link>
+            @endcan
+            @can('caja.configurar')
+                <x-responsive-nav-link :href="route('caja.medios-pago.index')" :active="request()->routeIs('caja.medios-pago.*', 'caja.cajas.*')">
+                    Medios de pago y cajas
                 </x-responsive-nav-link>
             @endcan
             @can('catalogo.gestionar')

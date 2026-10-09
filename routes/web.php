@@ -1,6 +1,11 @@
 <?php
 
 use App\Http\Controllers\AuditoriaController;
+use App\Http\Controllers\Caja\CajaController;
+use App\Http\Controllers\Caja\MedioPagoController;
+use App\Http\Controllers\Caja\MiCajaController;
+use App\Http\Controllers\Caja\PlanCuotaController;
+use App\Http\Controllers\Caja\SesionCajaController;
 use App\Http\Controllers\Catalogo\AlicuotaIvaController;
 use App\Http\Controllers\Catalogo\FotoProductoController;
 use App\Http\Controllers\Catalogo\MaestroController;
@@ -72,6 +77,32 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/productos/{producto}/ajuste', [AjusteStockController::class, 'edit'])->name('ajuste.edit');
         Route::put('/productos/{producto}/ajuste', [AjusteStockController::class, 'update'])->name('ajuste.update');
+    });
+
+    Route::prefix('caja')->name('caja.')->group(function () {
+        Route::middleware('can:caja.operar')->group(function () {
+            Route::get('/', [MiCajaController::class, 'show'])->name('mi-caja');
+            Route::post('/abrir', [MiCajaController::class, 'abrir'])->name('abrir');
+            Route::post('/movimientos', [MiCajaController::class, 'registrarMovimiento'])->name('movimientos.store');
+            Route::get('/cierre', [MiCajaController::class, 'editCierre'])->name('cierre.edit');
+            Route::put('/cierre', [MiCajaController::class, 'cerrar'])->name('cierre.update');
+        });
+
+        Route::get('/sesiones', [SesionCajaController::class, 'index'])->name('sesiones.index');
+        Route::get('/sesiones/{sesion}', [SesionCajaController::class, 'show'])->name('sesiones.show');
+        Route::post('/movimientos/{movimiento}/contraasiento', [SesionCajaController::class, 'contraasentar'])->name('movimientos.contraasiento');
+
+        Route::middleware('can:caja.configurar')->group(function () {
+            Route::resource('medios-pago', MedioPagoController::class)
+                ->parameters(['medios-pago' => 'medio'])
+                ->except(['show', 'destroy']);
+            Route::get('/medios-pago/{medio}/planes/create', [PlanCuotaController::class, 'create'])->name('medios-pago.planes.create');
+            Route::post('/medios-pago/{medio}/planes', [PlanCuotaController::class, 'store'])->name('medios-pago.planes.store');
+            Route::get('/medios-pago/{medio}/planes/{plan}/edit', [PlanCuotaController::class, 'edit'])->name('medios-pago.planes.edit');
+            Route::put('/medios-pago/{medio}/planes/{plan}', [PlanCuotaController::class, 'update'])->name('medios-pago.planes.update');
+
+            Route::resource('cajas', CajaController::class)->except(['show', 'destroy']);
+        });
     });
 
     Route::get('/auditoria', [AuditoriaController::class, 'index'])

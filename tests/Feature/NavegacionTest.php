@@ -93,6 +93,38 @@ class NavegacionTest extends TestCase
         $this->actingAs($sinRol)->get('/dashboard')->assertOk()->assertDontSee(route('stock.index'));
     }
 
+    public function test_cash_entries_depend_on_cash_permissions(): void
+    {
+        foreach ([Rol::Cajero, Rol::Vendedor] as $rol) {
+            $user = User::factory()->conSucursal(rol: $rol)->create();
+
+            $this->actingAs($user)->get('/dashboard')
+                ->assertOk()
+                ->assertSee(route('caja.mi-caja'))
+                ->assertDontSee(route('caja.sesiones.index'))
+                ->assertDontSee(route('caja.medios-pago.index'));
+        }
+
+        $gerente = User::factory()->conSucursal(rol: Rol::Gerente)->create();
+        $this->actingAs($gerente)->get('/dashboard')
+            ->assertOk()
+            ->assertSee(route('caja.mi-caja'))
+            ->assertSee(route('caja.sesiones.index'))
+            ->assertDontSee(route('caja.medios-pago.index'));
+
+        $deposito = User::factory()->conSucursal(rol: Rol::Deposito)->create();
+        $this->actingAs($deposito)->get('/dashboard')
+            ->assertOk()
+            ->assertDontSee(route('caja.mi-caja'));
+
+        $administrador = User::factory()->conSucursal(rol: Rol::Administrador)->create();
+        $this->actingAs($administrador)->get('/dashboard')
+            ->assertOk()
+            ->assertSee(route('caja.mi-caja'))
+            ->assertSee(route('caja.sesiones.index'))
+            ->assertSee(route('caja.medios-pago.index'));
+    }
+
     public function test_branch_selector_is_hidden_while_multi_branch_is_disabled(): void
     {
         $user = User::factory()->conSucursal(rol: Rol::Administrador)->create();

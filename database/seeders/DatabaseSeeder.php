@@ -22,6 +22,8 @@ class DatabaseSeeder extends Seeder
             ParametroSeeder::class,
             AlicuotaIvaSeeder::class,
             ColorSeeder::class,
+            MedioPagoSeeder::class,
+            CajaSeeder::class,
         ]);
     }
 }

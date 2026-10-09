@@ -4,6 +4,8 @@ namespace Tests\Feature\Seeders;
 
 use App\Enums\Permiso;
 use App\Enums\Rol;
+use App\Models\Caja;
+use App\Models\MedioPago;
 use App\Models\Sucursal;
 use App\Models\User;
 use Database\Seeders\DatabaseSeeder;
@@ -30,13 +32,13 @@ class DatosInicialesTest extends TestCase
             Permission::pluck('name')->all(),
         );
         $this->assertEqualsCanonicalizing(
-            ['usuarios.ver', 'auditoria.ver', 'catalogo.ver', 'catalogo.gestionar', 'stock.ver', 'stock.ajustar'],
+            ['usuarios.ver', 'auditoria.ver', 'catalogo.ver', 'catalogo.gestionar', 'stock.ver', 'stock.ajustar', 'caja.operar', 'caja.supervisar'],
             Role::findByName(Rol::Gerente->value)->permissions->pluck('name')->all(),
         );
 
         foreach ([Rol::Vendedor, Rol::Cajero] as $rol) {
             $this->assertEqualsCanonicalizing(
-                ['catalogo.ver', 'stock.ver'],
+                ['catalogo.ver', 'stock.ver', 'caja.operar'],
                 Role::findByName($rol->value)->permissions->pluck('name')->all(),
                 $rol->value,
             );
@@ -46,6 +48,9 @@ class DatosInicialesTest extends TestCase
             ['catalogo.ver', 'stock.ver', 'stock.ajustar'],
             Role::findByName(Rol::Deposito->value)->permissions->pluck('name')->all(),
         );
+
+        $this->assertSame(7, MedioPago::count());
+        $this->assertSame([Caja::PRINCIPAL], Caja::pluck('nombre')->all());
     }
 
     public function test_initial_data_can_be_seeded_twice_without_duplicates(): void
@@ -56,6 +61,8 @@ class DatosInicialesTest extends TestCase
         $this->assertSame(1, Sucursal::count());
         $this->assertSame(count(Rol::cases()), Role::count());
         $this->assertSame(count(Permiso::cases()), Permission::count());
+        $this->assertSame(7, MedioPago::count());
+        $this->assertSame(1, Caja::count());
     }
 
     public function test_initial_data_does_not_create_users(): void

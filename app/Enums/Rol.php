@@ -14,7 +14,8 @@ enum Rol: string
     case Deposito = 'Depósito';
 
     /**
-     * Permisos asignados al rol. El Administrador tiene todos por `Gate::before`.
+     * Permisos asignados al rol. El Administrador tiene todos por `Gate::before`;
+     * `caja.configurar` no se asigna a otros roles: configurar medios de pago es del Administrador.
      *
      * @return list<Permiso>
      */
@@ -29,9 +30,11 @@ enum Rol: string
                 Permiso::CatalogoGestionar,
                 Permiso::StockVer,
                 Permiso::StockAjustar,
+                Permiso::CajaOperar,
+                Permiso::CajaSupervisar,
             ],
             self::Deposito => [Permiso::CatalogoVer, Permiso::StockVer, Permiso::StockAjustar],
-            self::Vendedor, self::Cajero => [Permiso::CatalogoVer, Permiso::StockVer],
+            self::Vendedor, self::Cajero => [Permiso::CatalogoVer, Permiso::StockVer, Permiso::CajaOperar],
         };
     }
 }
