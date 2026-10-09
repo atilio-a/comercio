@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "defaultMode": "default",
+    "allow": [
+      "Bash(php artisan --version)",
+      "Bash(php artisan route:list)",
+      "Bash(php artisan test)",
+      "Bash(php artisan test *)",
+      "Bash(composer validate)",
+      "Bash(composer show *)",
+      "Bash(npm run build)",
+      "Bash(npm run lint)",
+      "Bash(git status --short)",
+      "Bash(git diff --check)",
+      "Bash(git diff *)",
+      "Bash(git log -5 --oneline)"
+    ],
+    "deny": [
+      "Read(.env)",
+      "Read(.env.*)",
+      "Edit(.env)",
+      "Edit(.env.*)",
+      "Write(.env)",
+      "Write(.env.*)",
+      "Bash(php artisan migrate:fresh *)",
+      "Bash(php artisan db:wipe *)",
+      "Bash(php artisan migrate:reset *)",
+      "Bash(rm -rf *)",
+      "Bash(git push --force *)"
+    ]
+  }
+}
