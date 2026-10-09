@@ -20,7 +20,7 @@
 
 ## Decisions
 
-### D1. Parámetro global en `parametros`, clave `catalogo.usar_talles`
+### D1. Parámetro global en `parametros`, clave `usar_talles`
 Se guarda en la tabla `parametros` (clave, valor) ya prevista, con valor `1`/`0` y semilla `1`. Se lee a través del mismo acceso a parámetros que usarán multi-sucursal, facturación y stock negativo, con caché invalidada al guardar.
 - *Alternativa descartada:* un campo `usa_talles` en `categorias`. Da más flexibilidad, pero el usuario pidió un interruptor en parametrización y agrega complejidad en venta y reportes. Queda como evolución compatible (D2 no lo impide).
 - *Alternativa descartada:* variable en `.env`/`config`. No es editable por el Administrador sin tocar el servidor.
