@@ -156,4 +156,68 @@ class NavegacionTest extends TestCase
             ->assertSee('aria-label="Menú"', false)
             ->assertSee('aria-controls="menu-movil"', false);
     }
+
+    public function test_purchases_entry_depends_on_purchases_permission(): void
+    {
+        foreach ([Rol::Deposito, Rol::Gerente, Rol::Administrador] as $rol) {
+            $user = User::factory()->conSucursal(rol: $rol)->create();
+
+            $this->actingAs($user)->get('/dashboard')->assertOk()->assertSee(route('compras.ordenes.index'));
+        }
+
+        foreach ([Rol::Vendedor, Rol::Cajero] as $rol) {
+            $user = User::factory()->conSucursal(rol: $rol)->create();
+
+            $this->actingAs($user)->get('/dashboard')->assertOk()->assertDontSee(route('compras.ordenes.index'));
+        }
+    }
+
+    public function test_groups_without_visible_entries_are_not_rendered(): void
+    {
+        $deposito = User::factory()->conSucursal(rol: Rol::Deposito)->create();
+        $this->actingAs($deposito)->get('/dashboard')
+            ->assertOk()
+            ->assertSee('id="menu-inventario"', false)
+            ->assertSee('id="seccion-inventario"', false)
+            ->assertDontSee('id="menu-ventas"', false)
+            ->assertDontSee('id="seccion-ventas"', false)
+            ->assertDontSee('id="menu-administracion"', false)
+            ->assertDontSee('id="seccion-administracion"', false);
+
+        $cajero = User::factory()->conSucursal(rol: Rol::Cajero)->create();
+        $this->actingAs($cajero)->get('/dashboard')
+            ->assertOk()
+            ->assertSee('id="menu-ventas"', false)
+            ->assertSee('id="menu-inventario"', false)
+            ->assertDontSee('id="menu-administracion"', false);
+
+        $sinRol = User::factory()->conSucursal()->create();
+        $this->actingAs($sinRol)->get('/dashboard')
+            ->assertOk()
+            ->assertDontSee('id="menu-inventario"', false)
+            ->assertDontSee('id="menu-ventas"', false)
+            ->assertDontSee('id="menu-administracion"', false);
+    }
+
+    public function test_group_menus_are_accessible(): void
+    {
+        $administrador = User::factory()->conSucursal(rol: Rol::Administrador)->create();
+
+        $this->actingAs($administrador)->get('/dashboard')
+            ->assertOk()
+            ->assertSeeInOrder(['id="menu-ventas"', 'id="menu-inventario"', 'id="menu-administracion"'], false)
+            ->assertSee('x-bind:aria-expanded="open.toString()" aria-haspopup="true"', false)
+            ->assertSee('@keydown.escape.window="open = false"', false)
+            ->assertSee('role="group" aria-labelledby="seccion-administracion"', false);
+    }
+
+    public function test_current_page_is_marked_in_its_group(): void
+    {
+        $deposito = User::factory()->conSucursal(rol: Rol::Deposito)->create();
+
+        $this->actingAs($deposito)->get(route('stock.index'))
+            ->assertOk()
+            ->assertSee('aria-current="page"', false)
+            ->assertSee('border-indigo-400 text-gray-900', false);
+    }
 }

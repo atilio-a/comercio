@@ -32,7 +32,7 @@ class DatosInicialesTest extends TestCase
             Permission::pluck('name')->all(),
         );
         $this->assertEqualsCanonicalizing(
-            ['usuarios.ver', 'auditoria.ver', 'catalogo.ver', 'catalogo.gestionar', 'stock.ver', 'stock.ajustar', 'caja.operar', 'caja.supervisar'],
+            ['usuarios.ver', 'auditoria.ver', 'catalogo.ver', 'catalogo.gestionar', 'stock.ver', 'stock.ajustar', 'caja.operar', 'caja.supervisar', 'compras.ver', 'compras.gestionar', 'compras.recibir'],
             Role::findByName(Rol::Gerente->value)->permissions->pluck('name')->all(),
         );
 
@@ -45,7 +45,7 @@ class DatosInicialesTest extends TestCase
         }
 
         $this->assertEqualsCanonicalizing(
-            ['catalogo.ver', 'stock.ver', 'stock.ajustar'],
+            ['catalogo.ver', 'stock.ver', 'stock.ajustar', 'compras.ver', 'compras.recibir'],
             Role::findByName(Rol::Deposito->value)->permissions->pluck('name')->all(),
         );
 

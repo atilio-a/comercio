@@ -32,8 +32,17 @@ enum Rol: string
                 Permiso::StockAjustar,
                 Permiso::CajaOperar,
                 Permiso::CajaSupervisar,
+                Permiso::ComprasVer,
+                Permiso::ComprasGestionar,
+                Permiso::ComprasRecibir,
             ],
-            self::Deposito => [Permiso::CatalogoVer, Permiso::StockVer, Permiso::StockAjustar],
+            self::Deposito => [
+                Permiso::CatalogoVer,
+                Permiso::StockVer,
+                Permiso::StockAjustar,
+                Permiso::ComprasVer,
+                Permiso::ComprasRecibir,
+            ],
             self::Vendedor, self::Cajero => [Permiso::CatalogoVer, Permiso::StockVer, Permiso::CajaOperar],
         };
     }

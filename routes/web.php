@@ -11,6 +11,10 @@ use App\Http\Controllers\Catalogo\FotoProductoController;
 use App\Http\Controllers\Catalogo\MaestroController;
 use App\Http\Controllers\Catalogo\ProductoController;
 use App\Http\Controllers\Catalogo\VarianteController;
+use App\Http\Controllers\Compras\BuscarVariantesController;
+use App\Http\Controllers\Compras\OrdenCompraController;
+use App\Http\Controllers\Compras\ProveedorController;
+use App\Http\Controllers\Compras\RecepcionController;
 use App\Http\Controllers\ParametroController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Stock\AjusteStockController;
@@ -103,6 +107,27 @@ Route::middleware('auth')->group(function () {
 
             Route::resource('cajas', CajaController::class)->except(['show', 'destroy']);
         });
+    });
+
+    Route::prefix('compras')->name('compras.')->group(function () {
+        Route::resource('proveedores', ProveedorController::class)
+            ->parameters(['proveedores' => 'proveedor'])
+            ->except(['show', 'destroy']);
+
+        Route::resource('ordenes', OrdenCompraController::class)
+            ->parameters(['ordenes' => 'orden'])
+            ->except(['destroy']);
+        Route::post('/ordenes/{orden}/emitir', [OrdenCompraController::class, 'emitir'])->name('ordenes.emitir');
+        Route::post('/ordenes/{orden}/anular', [OrdenCompraController::class, 'anular'])->name('ordenes.anular');
+
+        Route::resource('recepciones', RecepcionController::class)
+            ->parameters(['recepciones' => 'recepcion'])
+            ->only(['index', 'create', 'store', 'show']);
+        Route::post('/recepciones/{recepcion}/anular', [RecepcionController::class, 'anular'])->name('recepciones.anular');
+
+        Route::get('/variantes', BuscarVariantesController::class)
+            ->middleware('can:compras.ver')
+            ->name('variantes.buscar');
     });
 
     Route::get('/auditoria', [AuditoriaController::class, 'index'])

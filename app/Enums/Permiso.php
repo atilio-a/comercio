@@ -18,4 +18,7 @@ enum Permiso: string
     case CajaOperar = 'caja.operar';
     case CajaSupervisar = 'caja.supervisar';
     case CajaConfigurar = 'caja.configurar';
+    case ComprasVer = 'compras.ver';
+    case ComprasGestionar = 'compras.gestionar';
+    case ComprasRecibir = 'compras.recibir';
 }
