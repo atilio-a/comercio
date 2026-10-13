@@ -23,6 +23,9 @@
                         <div class="min-w-0">
                             <p class="font-medium text-gray-900">
                                 {{ $usuario->name }}
+                                @if ($usuario->esVendedor())
+                                    <span class="ms-1 rounded-sm bg-indigo-100 px-1.5 py-0.5 text-xs text-indigo-800">Vendedor</span>
+                                @endif
                                 @unless ($usuario->activo)
                                     <span class="ms-1 rounded-sm bg-red-100 px-1.5 py-0.5 text-xs text-red-800">Inactivo</span>
                                 @endunless

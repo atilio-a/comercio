@@ -34,6 +34,7 @@ class StoreUserRequest extends FormRequest
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', $this->reglaEmailUnico()],
             'password' => ['required', 'confirmed', Password::defaults()],
             'activo' => ['sometimes', 'boolean'],
+            'vendedor' => ['sometimes', 'boolean'],
             'roles' => ['required', 'array:'.implode(',', $this->idsSucursalesActivas())],
             'roles.*' => ['nullable', Rule::enum(Rol::class)],
         ];
@@ -94,7 +95,7 @@ class StoreUserRequest extends FormRequest
     }
 
     /**
-     * @return array{name: string, email: string, password?: string|null, activo: bool}
+     * @return array{name: string, email: string, password?: string|null, activo: bool, vendedor: bool|null}
      */
     public function datosUsuario(): array
     {
@@ -103,6 +104,7 @@ class StoreUserRequest extends FormRequest
             'email' => $this->validated('email'),
             'password' => $this->validated('password'),
             'activo' => $this->boolean('activo', true),
+            'vendedor' => $this->boolean('vendedor'),
         ];
     }
 

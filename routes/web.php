@@ -11,6 +11,7 @@ use App\Http\Controllers\Catalogo\FotoProductoController;
 use App\Http\Controllers\Catalogo\MaestroController;
 use App\Http\Controllers\Catalogo\ProductoController;
 use App\Http\Controllers\Catalogo\VarianteController;
+use App\Http\Controllers\Clientes\ClienteController;
 use App\Http\Controllers\Compras\BuscarVariantesController;
 use App\Http\Controllers\Compras\OrdenCompraController;
 use App\Http\Controllers\Compras\ProveedorController;
@@ -108,6 +109,10 @@ Route::middleware('auth')->group(function () {
             Route::resource('cajas', CajaController::class)->except(['show', 'destroy']);
         });
     });
+
+    Route::get('/clientes/buscar', [ClienteController::class, 'buscar'])->name('clientes.buscar');
+    Route::post('/clientes/rapido', [ClienteController::class, 'storeRapido'])->name('clientes.rapido');
+    Route::resource('clientes', ClienteController::class)->except(['destroy']);
 
     Route::prefix('compras')->name('compras.')->group(function () {
         Route::resource('proveedores', ProveedorController::class)

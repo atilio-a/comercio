@@ -6,6 +6,7 @@
     $usuarioMenu = auth()->user();
     $gruposMenu = collect([
         'ventas' => ['titulo' => 'Ventas y caja', 'entradas' => [
+            ['visible' => $usuarioMenu->can('clientes.ver'), 'url' => route('clientes.index'), 'activo' => request()->routeIs('clientes.*'), 'texto' => 'Clientes'],
             ['visible' => $usuarioMenu->can('caja.operar'), 'url' => route('caja.mi-caja'), 'activo' => request()->routeIs('caja.mi-caja', 'caja.cierre.*'), 'texto' => 'Caja'],
             ['visible' => $usuarioMenu->can('caja.supervisar'), 'url' => route('caja.sesiones.index'), 'activo' => request()->routeIs('caja.sesiones.*'), 'texto' => 'Sesiones de caja'],
             ['visible' => $usuarioMenu->can('caja.configurar'), 'url' => route('caja.medios-pago.index'), 'activo' => request()->routeIs('caja.medios-pago.*', 'caja.cajas.*'), 'texto' => 'Medios de pago y cajas'],

@@ -21,4 +21,7 @@ enum Permiso: string
     case ComprasVer = 'compras.ver';
     case ComprasGestionar = 'compras.gestionar';
     case ComprasRecibir = 'compras.recibir';
+    case ClientesVer = 'clientes.ver';
+    case ClientesGestionar = 'clientes.gestionar';
+    case CuentasCorrientesVer = 'cuentas_corrientes.ver';
 }

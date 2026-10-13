@@ -68,12 +68,15 @@ class UpdateUserRequest extends StoreUserRequest
     }
 
     /**
-     * @return array{name: string, email: string, password?: string|null, activo: bool}
+     * Si el formulario no envía la marca de vendedor, no se toca (null).
+     *
+     * @return array{name: string, email: string, password?: string|null, activo: bool, vendedor: bool|null}
      */
     public function datosUsuario(): array
     {
         return array_merge(parent::datosUsuario(), [
             'activo' => $this->boolean('activo'),
+            'vendedor' => $this->has('vendedor') ? $this->boolean('vendedor') : null,
         ]);
     }
 

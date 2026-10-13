@@ -36,6 +36,18 @@
         </div>
     </div>
 
+    <div class="flex items-start gap-3">
+        <input type="hidden" name="vendedor" value="0">
+        <input type="checkbox" id="vendedor" name="vendedor" value="1" aria-describedby="vendedor-ayuda"
+            class="mt-1 rounded-sm border-gray-300 text-indigo-600 shadow-xs focus:ring-indigo-500"
+            @checked(old('vendedor', $usuario?->esVendedor() ?? false))>
+        <div>
+            <label for="vendedor" class="font-medium text-gray-900">Es vendedor</label>
+            <p id="vendedor-ayuda" class="text-sm text-gray-600">Se le pueden asignar ventas en las sucursales donde opera.</p>
+            <x-input-error class="mt-1" :messages="$errors->get('vendedor')" />
+        </div>
+    </div>
+
     <fieldset>
         <legend class="font-medium text-gray-900">Sucursales y rol</legend>
         <p class="text-sm text-gray-600">Elegí el rol del usuario en cada sucursal donde opera.</p>

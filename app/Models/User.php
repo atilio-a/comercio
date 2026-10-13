@@ -8,6 +8,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -61,6 +62,24 @@ class User extends Authenticatable
     public function sucursales(): BelongsToMany
     {
         return $this->belongsToMany(Sucursal::class)->withTimestamps();
+    }
+
+    /**
+     * Registro de vendedor (VND-01), si el usuario fue marcado como vendedor alguna vez.
+     *
+     * @return HasOne<Vendedor, $this>
+     */
+    public function vendedor(): HasOne
+    {
+        return $this->hasOne(Vendedor::class);
+    }
+
+    /**
+     * Indica si el usuario es un vendedor activo.
+     */
+    public function esVendedor(): bool
+    {
+        return (bool) $this->vendedor?->activo;
     }
 
     /**

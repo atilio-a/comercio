@@ -24,7 +24,7 @@ class UserController extends Controller
         Gate::authorize('viewAny', User::class);
 
         $usuarios = User::query()
-            ->with(['sucursales' => fn ($query) => $query->orderBy('sucursales.id')])
+            ->with(['sucursales' => fn ($query) => $query->orderBy('sucursales.id'), 'vendedor'])
             ->orderBy('name')
             ->paginate(25);
 

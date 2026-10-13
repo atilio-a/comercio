@@ -35,6 +35,9 @@ enum Rol: string
                 Permiso::ComprasVer,
                 Permiso::ComprasGestionar,
                 Permiso::ComprasRecibir,
+                Permiso::ClientesVer,
+                Permiso::ClientesGestionar,
+                Permiso::CuentasCorrientesVer,
             ],
             self::Deposito => [
                 Permiso::CatalogoVer,
@@ -43,7 +46,21 @@ enum Rol: string
                 Permiso::ComprasVer,
                 Permiso::ComprasRecibir,
             ],
-            self::Vendedor, self::Cajero => [Permiso::CatalogoVer, Permiso::StockVer, Permiso::CajaOperar],
+            self::Vendedor => [
+                Permiso::CatalogoVer,
+                Permiso::StockVer,
+                Permiso::CajaOperar,
+                Permiso::ClientesVer,
+                Permiso::ClientesGestionar,
+            ],
+            self::Cajero => [
+                Permiso::CatalogoVer,
+                Permiso::StockVer,
+                Permiso::CajaOperar,
+                Permiso::ClientesVer,
+                Permiso::ClientesGestionar,
+                Permiso::CuentasCorrientesVer,
+            ],
         };
     }
 }

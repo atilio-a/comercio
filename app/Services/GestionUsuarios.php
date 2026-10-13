@@ -14,10 +14,11 @@ class GestionUsuarios
 {
     public function __construct(
         private RegistradorAuditoria $auditoria,
+        private Vendedores $vendedores,
     ) {}
 
     /**
-     * @param  array{name: string, email: string, password: string, activo?: bool}  $datos
+     * @param  array{name: string, email: string, password: string, activo?: bool, vendedor?: bool}  $datos
      * @param  array<int, Rol|null>  $roles  Rol por id de sucursal; null o ausente = sin asignar.
      */
     public function crear(array $datos, array $roles): User
@@ -31,12 +32,14 @@ class GestionUsuarios
             ]);
 
             $this->sincronizarRoles($user, $roles);
+            $this->vendedores->marcar($user, $datos['vendedor'] ?? false);
 
             $this->auditoria->registrar('usuario.creado', $user, null, [
                 'name' => $user->name,
                 'email' => $user->email,
                 'activo' => $user->activo,
                 'roles' => $this->rolesPorSucursal($user),
+                'vendedor' => $user->esVendedor(),
             ]);
 
             return $user;
@@ -44,7 +47,7 @@ class GestionUsuarios
     }
 
     /**
-     * @param  array{name: string, email: string, password?: string|null, activo: bool}  $datos
+     * @param  array{name: string, email: string, password?: string|null, activo: bool, vendedor?: bool|null}  $datos  `vendedor` null o ausente = no se toca.
      * @param  array<int, Rol|null>  $roles  Rol por id de sucursal; solo se tocan las sucursales incluidas.
      */
     public function actualizar(User $user, array $datos, array $roles): User
@@ -74,6 +77,13 @@ class GestionUsuarios
             if ($rolesAntes !== $rolesDespues) {
                 $antes['roles'] = $rolesAntes;
                 $cambios['roles'] = $rolesDespues;
+            }
+
+            $vendedorAntes = $user->esVendedor();
+
+            if (isset($datos['vendedor']) && $this->vendedores->marcar($user, $datos['vendedor'])) {
+                $antes['vendedor'] = $vendedorAntes;
+                $cambios['vendedor'] = $user->esVendedor();
             }
 
             if ($cambios === []) {
