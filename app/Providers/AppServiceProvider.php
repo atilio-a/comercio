@@ -11,8 +11,12 @@ use App\Models\Marca;
 use App\Models\Temporada;
 use App\Models\User;
 use App\Policies\MaestroPolicy;
+use App\Services\Comprobantes\EmisorComprobante;
+use App\Services\Comprobantes\EmisorInterno;
+use App\Services\Comprobantes\EmisorNoDisponible;
 use App\Services\Parametros;
 use App\Services\SucursalActiva;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -26,6 +30,11 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->scoped(SucursalActiva::class);
         $this->app->singleton(Parametros::class);
+
+        // Issuer chosen per resolution: the internal one until electronic invoicing (ARCA) exists.
+        $this->app->bind(EmisorComprobante::class, fn (Application $app): EmisorComprobante => $app->make(Parametros::class)->habilitado(Parametro::FacturacionElectronica)
+            ? $app->make(EmisorNoDisponible::class)
+            : $app->make(EmisorInterno::class));
     }
 
     /**

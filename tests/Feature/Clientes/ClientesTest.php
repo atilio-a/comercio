@@ -283,13 +283,14 @@ class ClientesTest extends TestCase
         $this->assertSame(2, Cliente::count());
     }
 
-    public function test_customer_profile_reserves_the_sales_history(): void
+    public function test_customer_profile_shows_an_empty_sales_history(): void
     {
         $cliente = Cliente::factory()->create();
 
         $this->actingAs($this->vendedor)->get(route('clientes.show', $cliente))
             ->assertOk()
             ->assertSee($cliente->nombre)
-            ->assertSee('El historial de ventas del cliente estará disponible con el módulo de ventas.');
+            ->assertSee('Historial de compras')
+            ->assertSee('Sin compras registradas en esta sucursal.');
     }
 }

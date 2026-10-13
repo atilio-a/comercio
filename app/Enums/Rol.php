@@ -15,7 +15,8 @@ enum Rol: string
 
     /**
      * Permisos asignados al rol. El Administrador tiene todos por `Gate::before`;
-     * `caja.configurar` no se asigna a otros roles: configurar medios de pago es del Administrador.
+     * `caja.configurar` y `puntos_venta.configurar` no se asignan a otros roles: configurar medios de pago
+     * y puntos de venta es del Administrador.
      *
      * @return list<Permiso>
      */
@@ -38,6 +39,10 @@ enum Rol: string
                 Permiso::ClientesVer,
                 Permiso::ClientesGestionar,
                 Permiso::CuentasCorrientesVer,
+                Permiso::VentasVender,
+                Permiso::VentasVerTodas,
+                Permiso::VentasAutorizarDescuentos,
+                Permiso::VentasAnular,
             ],
             self::Deposito => [
                 Permiso::CatalogoVer,
@@ -52,6 +57,7 @@ enum Rol: string
                 Permiso::CajaOperar,
                 Permiso::ClientesVer,
                 Permiso::ClientesGestionar,
+                Permiso::VentasVender,
             ],
             self::Cajero => [
                 Permiso::CatalogoVer,
@@ -60,6 +66,8 @@ enum Rol: string
                 Permiso::ClientesVer,
                 Permiso::ClientesGestionar,
                 Permiso::CuentasCorrientesVer,
+                Permiso::VentasVender,
+                Permiso::VentasVerTodas,
             ],
         };
     }

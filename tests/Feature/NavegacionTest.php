@@ -172,6 +172,29 @@ class NavegacionTest extends TestCase
         }
     }
 
+    public function test_sales_entries_are_in_the_sales_group_and_depend_on_sales_permissions(): void
+    {
+        foreach ([Rol::Vendedor, Rol::Cajero, Rol::Gerente] as $rol) {
+            $user = User::factory()->conSucursal(rol: $rol)->create();
+
+            $this->actingAs($user)->get('/dashboard')
+                ->assertOk()
+                ->assertSeeInOrder(['id="menu-ventas"', route('ventas.create'), route('ventas.index').'"', route('clientes.index'), 'id="menu-inventario"'], false)
+                ->assertDontSee(route('ventas.puntos-venta.index'));
+        }
+
+        $administrador = User::factory()->conSucursal(rol: Rol::Administrador)->create();
+        $this->actingAs($administrador)->get('/dashboard')
+            ->assertOk()
+            ->assertSee(route('ventas.create'))
+            ->assertSee(route('ventas.puntos-venta.index'));
+
+        $deposito = User::factory()->conSucursal(rol: Rol::Deposito)->create();
+        $this->actingAs($deposito)->get('/dashboard')
+            ->assertOk()
+            ->assertDontSee(route('ventas.index'));
+    }
+
     public function test_customers_entry_is_in_the_sales_group_and_depends_on_its_permission(): void
     {
         foreach ([Rol::Vendedor, Rol::Cajero, Rol::Gerente, Rol::Administrador] as $rol) {

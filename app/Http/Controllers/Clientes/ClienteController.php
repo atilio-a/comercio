@@ -8,8 +8,12 @@ use App\Enums\Permiso;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Clientes\GuardarClienteRequest;
 use App\Models\Cliente;
+use App\Models\User;
+use App\Models\Venta;
 use App\Services\Parametros;
 use App\Services\RegistradorAuditoria;
+use App\Services\SucursalActiva;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -26,6 +30,11 @@ class ClienteController extends Controller
     private const CAMPOS_AUDITADOS = [
         'nombre', 'dni_cuit', 'telefono', 'email', 'talle_habitual', 'condicion_iva', 'observaciones', 'activo',
     ];
+
+    /**
+     * Ventas que muestra la ficha; el resto se consulta en el listado de ventas.
+     */
+    private const VENTAS_EN_FICHA = 10;
 
     public function __construct(private Parametros $parametros) {}
 
@@ -112,6 +121,7 @@ class ClienteController extends Controller
                 ->with(['user:id,name', 'sucursal:id,nombre'])
                 ->orderByDesc('id')
                 ->paginate(25),
+            'ventas' => $this->ultimasVentas($request->user(), $cliente),
         ]);
     }
 
@@ -185,6 +195,27 @@ class ClienteController extends Controller
         }
 
         return $datos;
+    }
+
+    /**
+     * Últimas ventas del cliente en la sucursal activa, con la visibilidad del listado de ventas.
+     *
+     * @return Collection<int, Venta>
+     */
+    private function ultimasVentas(User $user, Cliente $cliente): Collection
+    {
+        if (! $user->canAny([Permiso::VentasVender->value, Permiso::VentasVerTodas->value])) {
+            return new Collection;
+        }
+
+        return Venta::query()
+            ->where('sucursal_id', app(SucursalActiva::class)->id())
+            ->where('cliente_id', $cliente->id)
+            ->visiblesPara($user)
+            ->with(['comprobante', 'vendedor.user:id,name'])
+            ->orderByDesc('id')
+            ->limit(self::VENTAS_EN_FICHA)
+            ->get();
     }
 
     private function usarTalles(): bool

@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             ColorSeeder::class,
             MedioPagoSeeder::class,
             CajaSeeder::class,
+            PuntoVentaSeeder::class,
         ]);
     }
 }

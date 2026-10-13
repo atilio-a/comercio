@@ -24,4 +24,9 @@ enum Permiso: string
     case ClientesVer = 'clientes.ver';
     case ClientesGestionar = 'clientes.gestionar';
     case CuentasCorrientesVer = 'cuentas_corrientes.ver';
+    case VentasVender = 'ventas.vender';
+    case VentasVerTodas = 'ventas.ver_todas';
+    case VentasAutorizarDescuentos = 'ventas.autorizar_descuentos';
+    case VentasAnular = 'ventas.anular';
+    case PuntosVentaConfigurar = 'puntos_venta.configurar';
 }

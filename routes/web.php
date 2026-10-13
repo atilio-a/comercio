@@ -23,6 +23,9 @@ use App\Http\Controllers\Stock\KardexController;
 use App\Http\Controllers\Stock\StockController;
 use App\Http\Controllers\SucursalActivaController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\Ventas\ComprobanteController;
+use App\Http\Controllers\Ventas\PuntoVentaController;
+use App\Http\Controllers\Ventas\VentaController;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/dashboard');
@@ -113,6 +116,22 @@ Route::middleware('auth')->group(function () {
     Route::get('/clientes/buscar', [ClienteController::class, 'buscar'])->name('clientes.buscar');
     Route::post('/clientes/rapido', [ClienteController::class, 'storeRapido'])->name('clientes.rapido');
     Route::resource('clientes', ClienteController::class)->except(['destroy']);
+
+    Route::prefix('ventas')->name('ventas.')->group(function () {
+        Route::resource('puntos-venta', PuntoVentaController::class)
+            ->parameters(['puntos-venta' => 'puntoVenta'])
+            ->except(['show', 'destroy']);
+
+        Route::get('/variantes', [VentaController::class, 'buscarVariantes'])->name('variantes.buscar');
+        Route::post('/previsualizar', [VentaController::class, 'previsualizar'])->name('previsualizar');
+        Route::get('/', [VentaController::class, 'index'])->name('index');
+        Route::get('/create', [VentaController::class, 'create'])->name('create');
+        Route::post('/', [VentaController::class, 'store'])->name('store');
+        Route::get('/{venta}', [VentaController::class, 'show'])->whereNumber('venta')->name('show');
+        Route::post('/{venta}/anular', [VentaController::class, 'anular'])->whereNumber('venta')->name('anular');
+    });
+
+    Route::get('/comprobantes/{comprobante}', [ComprobanteController::class, 'show'])->name('comprobantes.show');
 
     Route::prefix('compras')->name('compras.')->group(function () {
         Route::resource('proveedores', ProveedorController::class)
