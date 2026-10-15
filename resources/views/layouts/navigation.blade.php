@@ -8,6 +8,7 @@
         'ventas' => ['titulo' => 'Ventas y caja', 'entradas' => [
             ['visible' => $usuarioMenu->can('ventas.vender'), 'url' => route('ventas.create'), 'activo' => request()->routeIs('ventas.create'), 'texto' => 'Vender'],
             ['visible' => $usuarioMenu->canAny(['ventas.vender', 'ventas.ver_todas']), 'url' => route('ventas.index'), 'activo' => request()->routeIs('ventas.index', 'ventas.show', 'comprobantes.*'), 'texto' => 'Ventas'],
+            ['visible' => $usuarioMenu->can('ventas.devolver'), 'url' => route('ventas.devoluciones.index'), 'activo' => request()->routeIs('ventas.devoluciones.*'), 'texto' => 'Devoluciones'],
             ['visible' => $usuarioMenu->can('clientes.ver'), 'url' => route('clientes.index'), 'activo' => request()->routeIs('clientes.*'), 'texto' => 'Clientes'],
             ['visible' => $usuarioMenu->can('caja.operar'), 'url' => route('caja.mi-caja'), 'activo' => request()->routeIs('caja.mi-caja', 'caja.cierre.*'), 'texto' => 'Caja'],
             ['visible' => $usuarioMenu->can('caja.supervisar'), 'url' => route('caja.sesiones.index'), 'activo' => request()->routeIs('caja.sesiones.*'), 'texto' => 'Sesiones de caja'],

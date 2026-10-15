@@ -24,6 +24,7 @@ use App\Http\Controllers\Stock\StockController;
 use App\Http\Controllers\SucursalActivaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Ventas\ComprobanteController;
+use App\Http\Controllers\Ventas\DevolucionController;
 use App\Http\Controllers\Ventas\PuntoVentaController;
 use App\Http\Controllers\Ventas\VentaController;
 use Illuminate\Support\Facades\Route;
@@ -124,11 +125,15 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/variantes', [VentaController::class, 'buscarVariantes'])->name('variantes.buscar');
         Route::post('/previsualizar', [VentaController::class, 'previsualizar'])->name('previsualizar');
+        Route::get('/devoluciones', [DevolucionController::class, 'index'])->name('devoluciones.index');
         Route::get('/', [VentaController::class, 'index'])->name('index');
         Route::get('/create', [VentaController::class, 'create'])->name('create');
         Route::post('/', [VentaController::class, 'store'])->name('store');
         Route::get('/{venta}', [VentaController::class, 'show'])->whereNumber('venta')->name('show');
         Route::post('/{venta}/anular', [VentaController::class, 'anular'])->whereNumber('venta')->name('anular');
+        Route::get('/{venta}/devolucion', [DevolucionController::class, 'create'])->whereNumber('venta')->name('devoluciones.create');
+        Route::post('/{venta}/devolucion', [DevolucionController::class, 'store'])->whereNumber('venta')->name('devoluciones.store');
+        Route::get('/devoluciones/{devolucion}', [DevolucionController::class, 'show'])->whereNumber('devolucion')->name('devoluciones.show');
     });
 
     Route::get('/comprobantes/{comprobante}', [ComprobanteController::class, 'show'])->name('comprobantes.show');

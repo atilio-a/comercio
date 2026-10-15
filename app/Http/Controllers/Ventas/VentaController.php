@@ -14,11 +14,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Ventas\AnularVentaRequest;
 use App\Http\Requests\Ventas\PrevisualizarVentaRequest;
 use App\Http\Requests\Ventas\RegistrarVentaRequest;
+use App\Models\Cliente;
 use App\Models\MedioPago;
 use App\Models\PlanCuota;
 use App\Models\PuntoVenta;
 use App\Models\Venta;
 use App\Services\CatalogoVenta;
+use App\Services\Devoluciones;
 use App\Services\Formato;
 use App\Services\Importes;
 use App\Services\MovimientosCaja;
@@ -86,12 +88,31 @@ class VentaController extends Controller
         $cajaAbierta = $caja->sesionAbierta() !== null;
         $propio = $disponibles->firstWhere('user_id', $request->user()->id);
 
+        $clienteInicial = null;
+        if ($request->filled('cliente_id') && $request->user()->can(Permiso::ClientesVer->value)) {
+            $cliente = Cliente::query()->with('cuentaCorriente')->where('activo', true)->find($request->query('cliente_id'));
+            if ($cliente) {
+                $clienteInicial = [
+                    'id' => $cliente->id,
+                    'nombre' => $cliente->nombre,
+                    'documento' => $cliente->documentoFormateado(),
+                    'telefono' => $cliente->telefono,
+                    'condicion_iva' => $cliente->condicion_iva->value,
+                    'saldo_a_favor' => $cliente->cuentaCorriente?->saldoAFavor() ?? '0.00',
+                ];
+                if ($parametros->habilitado(Parametro::UsarTalles)) {
+                    $clienteInicial['talle_habitual'] = $cliente->talle_habitual;
+                }
+            }
+        }
+
         return view('ventas.create', [
             'configuracion' => [
                 'usarTalles' => $parametros->habilitado(Parametro::UsarTalles),
                 'vendedorId' => $propio?->id,
                 'puedeAutorizar' => $request->user()->can(Permiso::VentasAutorizarDescuentos->value),
                 'cajaAbierta' => $cajaAbierta,
+                'clienteInicial' => $clienteInicial,
                 'medios' => $this->medios(),
                 'urls' => [
                     'buscar' => route('ventas.variantes.buscar'),
@@ -186,18 +207,24 @@ class VentaController extends Controller
         $venta->load([
             'cliente', 'vendedor.user:id,name', 'user:id,name', 'puntoVenta', 'anuladaPor:id,name',
             'autorizanteDescuento:id,name', 'comprobante', 'comprobanteAnulacion',
+            'devoluciones.notaCredito',
             'items' => fn ($query) => $query->orderBy('id'),
             'items.variante:id,producto_id,color_id,talle,sku',
             'items.variante.producto:id,nombre',
             'items.variante.color:id,nombre',
             'items.autorizanteDescuento:id,name',
+            'items.devolucionItems',
             'pagos' => fn ($query) => $query->orderBy('id'),
             'pagos.medioPago:id,nombre',
         ]);
 
+        $cantidadesDevueltas = app(Devoluciones::class)->cantidadesDevueltas($venta);
+
         return view('ventas.show', [
             'venta' => $venta,
             'puedeAnular' => $request->user()->can('anular', $venta),
+            'puedeDevolver' => $request->user()->can('devolver', $venta),
+            'cantidadesDevueltas' => $cantidadesDevueltas,
             'descuentoGeneral' => Importes::aDecimal($venta->items->sum(fn ($item) => Importes::aCentavos((string) $item->descuento_venta))),
         ]);
     }

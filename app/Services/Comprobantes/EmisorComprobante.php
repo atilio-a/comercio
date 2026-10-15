@@ -4,6 +4,7 @@ namespace App\Services\Comprobantes;
 
 use App\Exceptions\VentaRechazada;
 use App\Models\Comprobante;
+use App\Models\Devolucion;
 use App\Models\Venta;
 
 /**
@@ -43,4 +44,11 @@ interface EmisorComprobante
      * @throws VentaRechazada
      */
     public function emitirAnulacion(Venta $venta, Comprobante $original, string $motivo): Comprobante;
+
+    /**
+     * Emite la nota de crédito de una devolución recién registrada (con ARCA, la nota de crédito fiscal).
+     *
+     * @throws VentaRechazada
+     */
+    public function emitirNotaCredito(Devolucion $devolucion): Comprobante;
 }

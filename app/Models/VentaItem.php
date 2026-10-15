@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use LogicException;
 
 /**
@@ -93,5 +94,15 @@ class VentaItem extends Model
     public function autorizanteDescuento(): BelongsTo
     {
         return $this->belongsTo(User::class, 'descuento_autorizado_por');
+    }
+
+    /**
+     * Unidades de este ítem devueltas en las devoluciones de la venta.
+     *
+     * @return HasMany<DevolucionItem, $this>
+     */
+    public function devolucionItems(): HasMany
+    {
+        return $this->hasMany(DevolucionItem::class);
     }
 }

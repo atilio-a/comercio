@@ -43,6 +43,8 @@ enum Rol: string
                 Permiso::VentasVerTodas,
                 Permiso::VentasAutorizarDescuentos,
                 Permiso::VentasAnular,
+                Permiso::VentasDevolver,
+                Permiso::VentasReembolsar,
             ],
             self::Deposito => [
                 Permiso::CatalogoVer,
@@ -58,6 +60,7 @@ enum Rol: string
                 Permiso::ClientesVer,
                 Permiso::ClientesGestionar,
                 Permiso::VentasVender,
+                Permiso::VentasDevolver,
             ],
             self::Cajero => [
                 Permiso::CatalogoVer,
@@ -68,6 +71,7 @@ enum Rol: string
                 Permiso::CuentasCorrientesVer,
                 Permiso::VentasVender,
                 Permiso::VentasVerTodas,
+                Permiso::VentasDevolver,
             ],
         };
     }

@@ -179,7 +179,7 @@ class NavegacionTest extends TestCase
 
             $this->actingAs($user)->get('/dashboard')
                 ->assertOk()
-                ->assertSeeInOrder(['id="menu-ventas"', route('ventas.create'), route('ventas.index').'"', route('clientes.index'), 'id="menu-inventario"'], false)
+                ->assertSeeInOrder(['id="menu-ventas"', route('ventas.create'), route('ventas.index').'"', route('ventas.devoluciones.index'), route('clientes.index'), 'id="menu-inventario"'], false)
                 ->assertDontSee(route('ventas.puntos-venta.index'));
         }
 
@@ -187,12 +187,14 @@ class NavegacionTest extends TestCase
         $this->actingAs($administrador)->get('/dashboard')
             ->assertOk()
             ->assertSee(route('ventas.create'))
+            ->assertSee(route('ventas.devoluciones.index'))
             ->assertSee(route('ventas.puntos-venta.index'));
 
         $deposito = User::factory()->conSucursal(rol: Rol::Deposito)->create();
         $this->actingAs($deposito)->get('/dashboard')
             ->assertOk()
-            ->assertDontSee(route('ventas.index'));
+            ->assertDontSee(route('ventas.index'))
+            ->assertDontSee(route('ventas.devoluciones.index'));
     }
 
     public function test_customers_entry_is_in_the_sales_group_and_depends_on_its_permission(): void

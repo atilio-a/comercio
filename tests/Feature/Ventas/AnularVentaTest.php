@@ -3,6 +3,7 @@
 namespace Tests\Feature\Ventas;
 
 use App\Enums\EstadoVenta;
+use App\Enums\ResolucionDevolucion;
 use App\Enums\TipoComprobante;
 use App\Enums\TipoMovimientoStock;
 use App\Models\Auditoria;
@@ -13,7 +14,9 @@ use App\Models\Cliente;
 use App\Models\Comprobante;
 use App\Models\MovimientoStock;
 use App\Models\Venta;
+use App\Services\Devoluciones;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Gate;
 use Tests\Support\EscenarioVentas;
 use Tests\TestCase;
 
@@ -157,5 +160,28 @@ class AnularVentaTest extends TestCase
         }
 
         $this->assertSame(EstadoVenta::Confirmada, $this->venta->fresh()->estado);
+    }
+
+    public function test_a_sale_with_returns_cannot_be_voided(): void
+    {
+        $item = $this->venta->items()->first();
+
+        app(Devoluciones::class)->registrar(
+            $this->venta,
+            [$item->id => 1],
+            'Cambio de talle',
+            ResolucionDevolucion::SaldoAFavor,
+        );
+
+        $venta = $this->venta->fresh();
+        $this->assertFalse(Gate::forUser($this->gerente)->allows('anular', $venta));
+
+        $this->actingAs($this->gerente)
+            ->post(route('ventas.anular', $venta), ['motivo' => 'Intento anular'])
+            ->assertSessionHasErrorsIn('anulacion', [
+                'motivo' => "La venta N° {$venta->id} tiene devoluciones: no se puede anular.",
+            ]);
+
+        $this->assertSame(EstadoVenta::Confirmada, $venta->fresh()->estado);
     }
 }

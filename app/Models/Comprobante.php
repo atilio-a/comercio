@@ -99,6 +99,16 @@ class Comprobante extends Model
     }
 
     /**
+     * Devolución de la que es nota de crédito, si lo es.
+     *
+     * @return BelongsTo<Devolucion, $this>
+     */
+    public function devolucion(): BelongsTo
+    {
+        return $this->belongsTo(Devolucion::class);
+    }
+
+    /**
      * @return BelongsTo<PuntoVenta, $this>
      */
     public function puntoVenta(): BelongsTo

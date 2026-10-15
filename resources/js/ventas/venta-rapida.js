@@ -46,10 +46,25 @@ export default function ventaRapida(config = {}) {
         enviando: false,
 
         init() {
-            const efectivo = this.medios.find((medio) => medio.tipo === 'efectivo') ?? this.medios[0];
+            if (config.clienteInicial) {
+                this.cliente = config.clienteInicial;
+                const saldoAFavor = Number.parseFloat(config.clienteInicial.saldo_a_favor || 0);
+                const medioSaldo = this.medios.find((medio) => medio.tipo === 'saldo_a_favor');
 
-            if (efectivo) {
-                this.pagos.push(this.nuevoPago(efectivo.id));
+                if (medioSaldo && saldoAFavor > 0) {
+                    this.pagos.push(this.nuevoPago(medioSaldo.id));
+                } else {
+                    const efectivo = this.medios.find((medio) => medio.tipo === 'efectivo') ?? this.medios[0];
+                    if (efectivo) {
+                        this.pagos.push(this.nuevoPago(efectivo.id));
+                    }
+                }
+            } else {
+                const efectivo = this.medios.find((medio) => medio.tipo === 'efectivo') ?? this.medios[0];
+
+                if (efectivo) {
+                    this.pagos.push(this.nuevoPago(efectivo.id));
+                }
             }
         },
 

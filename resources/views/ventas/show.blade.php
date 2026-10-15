@@ -13,11 +13,19 @@
                 @endif
             </h2>
 
-            @can('ventas.vender')
-                <a href="{{ route('ventas.create') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                    Nueva venta
-                </a>
-            @endcan
+            <div class="flex flex-wrap items-center gap-2">
+                @if ($puedeDevolver)
+                    <a href="{{ route('ventas.devoluciones.create', $venta) }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                        Devolver / cambiar
+                    </a>
+                @endif
+
+                @can('ventas.vender')
+                    <a href="{{ route('ventas.create') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                        Nueva venta
+                    </a>
+                @endcan
+            </div>
         </div>
     </x-slot>
 
@@ -103,6 +111,9 @@
                             <div class="min-w-0">
                                 <p class="font-medium text-gray-900">{{ $item->variante->producto->nombre }} <span class="font-normal text-gray-700">{{ $item->variante->descripcion() }}</span></p>
                                 <p class="text-sm text-gray-600">{{ $item->cantidad }} × $ {{ Formato::importe($item->precio_final) }} · SKU {{ $item->variante->sku }} · IVA {{ Formato::porcentaje($item->alicuota) }}</p>
+                                @if (($cantidadesDevueltas[$item->id] ?? 0) > 0)
+                                    <p class="text-sm font-medium text-amber-700">Devueltas: {{ $cantidadesDevueltas[$item->id] }}</p>
+                                @endif
                                 @if (Importes::aCentavos((string) $item->descuento) > 0)
                                     <p class="text-sm text-gray-600">Descuento $ {{ Formato::importe($item->descuento) }} (autorizó {{ $item->autorizanteDescuento?->name ?? '—' }})</p>
                                 @endif
@@ -118,6 +129,31 @@
                     @endforeach
                 </ul>
             </section>
+
+            @if ($venta->devoluciones->isNotEmpty())
+                <section aria-labelledby="devoluciones-titulo" class="p-4 bg-white shadow-sm sm:rounded-lg space-y-2">
+                    <h3 id="devoluciones-titulo" class="font-medium text-gray-900">Devoluciones</h3>
+                    <ul class="divide-y divide-gray-100 text-sm">
+                        @foreach ($venta->devoluciones as $devolucion)
+                            <li class="py-2 flex flex-wrap items-center justify-between gap-2">
+                                <div>
+                                    <a href="{{ route('ventas.devoluciones.show', $devolucion) }}" class="font-medium text-indigo-700 underline rounded-md focus:outline-hidden focus:ring-2 focus:ring-indigo-500">
+                                        Devolución N° {{ $devolucion->id }}
+                                    </a>
+                                    <span class="text-gray-600">· {{ $devolucion->fecha->format('d/m/Y') }} · {{ $devolucion->resolucion->etiqueta() }}</span>
+                                    <p class="text-xs text-gray-600">Motivo: {{ $devolucion->motivo }}</p>
+                                </div>
+                                <div class="text-end">
+                                    <span class="font-semibold text-gray-900">$ {{ Formato::importe($devolucion->importe) }}</span>
+                                    @if ($devolucion->notaCredito)
+                                        <p class="text-xs text-gray-600">NC {{ $devolucion->notaCredito->numeroCompleto() }}</p>
+                                    @endif
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
+                </section>
+            @endif
 
             <section aria-labelledby="pagos-titulo" class="p-4 bg-white shadow-sm sm:rounded-lg">
                 <h3 id="pagos-titulo" class="font-medium text-gray-900">Pagos</h3>

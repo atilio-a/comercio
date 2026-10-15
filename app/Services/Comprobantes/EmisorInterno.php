@@ -2,8 +2,11 @@
 
 namespace App\Services\Comprobantes;
 
+use App\Enums\ResolucionDevolucion;
 use App\Enums\TipoComprobante;
 use App\Models\Comprobante;
+use App\Models\Devolucion;
+use App\Models\DevolucionItem;
 use App\Models\Venta;
 use App\Models\VentaItem;
 use App\Models\VentaPago;
@@ -66,13 +69,108 @@ class EmisorInterno implements EmisorComprobante
     }
 
     /**
+     * Nota de crédito de la devolución, en el punto de venta de la venta, con los ítems
+     * devueltos, el reintegro según la resolución y la referencia al comprobante de la venta.
+     */
+    public function emitirNotaCredito(Devolucion $devolucion): Comprobante
+    {
+        $devolucion->loadMissing([
+            'venta.sucursal', 'venta.puntoVenta', 'venta.vendedor.user', 'venta.comprobante', 'cliente', 'medioPago',
+            'items.ventaItem', 'items.variante.producto', 'items.variante.color',
+        ]);
+
+        $venta = $devolucion->venta;
+        $tipo = TipoComprobante::NotaCreditoInterna;
+        $numero = $this->numerador->siguiente($venta->puntoVenta, $tipo);
+
+        $porAlicuota = [];
+
+        foreach ($devolucion->items as $item) {
+            $clave = (string) $item->ventaItem->alicuota;
+            $porAlicuota[$clave] ??= ['alicuota' => $clave, 'neto' => 0, 'iva' => 0];
+            $porAlicuota[$clave]['neto'] += Importes::aCentavos((string) $item->neto);
+            $porAlicuota[$clave]['iva'] += Importes::aCentavos((string) $item->iva);
+        }
+
+        ksort($porAlicuota, SORT_NUMERIC);
+
+        $reintegro = $devolucion->resolucion === ResolucionDevolucion::Reembolso
+            ? $devolucion->medioPago->nombre
+            : ResolucionDevolucion::SaldoAFavor->etiqueta();
+
+        $datos = [
+            ...$this->encabezado($venta, $tipo, $numero),
+            'comercio' => config('app.name'),
+            'sucursal' => [
+                'nombre' => $venta->sucursal->nombre,
+                'domicilio' => $venta->sucursal->domicilio,
+            ],
+            'cliente' => $devolucion->cliente ? [
+                'nombre' => $devolucion->cliente->nombre,
+                'documento' => $devolucion->cliente->dni_cuit ? $devolucion->cliente->documentoFormateado() : null,
+                'condicion_iva' => $devolucion->cliente->condicion_iva->etiqueta(),
+            ] : null,
+            'vendedor' => $venta->vendedor->user->name,
+            'items' => $devolucion->items->map(function (DevolucionItem $item) {
+                $bruto = Importes::aCentavos((string) $item->ventaItem->precio_final) * $item->cantidad;
+                $importe = Importes::aCentavos((string) $item->importe);
+
+                return [
+                    'descripcion' => $item->variante->producto->nombre.' '.$item->variante->descripcion(),
+                    'sku' => $item->variante->sku,
+                    'cantidad' => $item->cantidad,
+                    'precio_final' => (string) $item->ventaItem->precio_final,
+                    'descuento' => Importes::aDecimal(max(0, $bruto - $importe)),
+                    'recargo' => Importes::aDecimal(max(0, $importe - $bruto)),
+                    'total' => (string) $item->importe,
+                    'alicuota' => (string) $item->ventaItem->alicuota,
+                    'neto' => (string) $item->neto,
+                    'iva' => (string) $item->iva,
+                ];
+            })->values()->all(),
+            'pagos' => [[
+                'medio' => $reintegro,
+                'cuotas' => null,
+                'importe' => (string) $devolucion->importe,
+                'recargo' => '0.00',
+                'cobrado' => (string) $devolucion->importe,
+                'referencia' => null,
+            ]],
+            'totales' => [
+                'descuento' => '0.00',
+                'recargo' => '0.00',
+                'subtotal_neto' => (string) $devolucion->neto,
+                'iva' => (string) $devolucion->iva,
+                'total' => (string) $devolucion->importe,
+                'iva_por_alicuota' => array_values(array_map(fn (array $fila) => [
+                    'alicuota' => $fila['alicuota'],
+                    'neto' => Importes::aDecimal($fila['neto']),
+                    'iva' => Importes::aDecimal($fila['iva']),
+                ], $porAlicuota)),
+            ],
+            'devolucion' => [
+                'id' => $devolucion->id,
+                'motivo' => $devolucion->motivo,
+                'resolucion' => $devolucion->resolucion->etiqueta(),
+            ],
+            'referencia' => $venta->comprobante ? [
+                'numero_completo' => $venta->comprobante->numeroCompleto(),
+                'fecha' => $venta->comprobante->fecha->toDateString(),
+            ] : null,
+        ];
+
+        return $this->crear($venta, $tipo, $numero, $datos, devolucion: $devolucion);
+    }
+
+    /**
      * @param  array<string, mixed>  $datos
      */
-    private function crear(Venta $venta, TipoComprobante $tipo, int $numero, array $datos, ?Comprobante $anulado = null): Comprobante
+    private function crear(Venta $venta, TipoComprobante $tipo, int $numero, array $datos, ?Comprobante $anulado = null, ?Devolucion $devolucion = null): Comprobante
     {
         return Comprobante::create([
             'sucursal_id' => $venta->sucursal_id,
             'venta_id' => $venta->id,
+            'devolucion_id' => $devolucion?->id,
             'tipo' => $tipo,
             'punto_venta_id' => $anulado?->punto_venta_id ?? $venta->punto_venta_id,
             'numero' => $numero,

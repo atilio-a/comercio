@@ -28,5 +28,7 @@ enum Permiso: string
     case VentasVerTodas = 'ventas.ver_todas';
     case VentasAutorizarDescuentos = 'ventas.autorizar_descuentos';
     case VentasAnular = 'ventas.anular';
+    case VentasDevolver = 'ventas.devolver';
+    case VentasReembolsar = 'ventas.reembolsar';
     case PuntosVentaConfigurar = 'puntos_venta.configurar';
 }

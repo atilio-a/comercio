@@ -4,6 +4,7 @@ namespace App\Services\Comprobantes;
 
 use App\Exceptions\VentaRechazada;
 use App\Models\Comprobante;
+use App\Models\Devolucion;
 use App\Models\Venta;
 
 /**
@@ -31,6 +32,11 @@ class EmisorNoDisponible implements EmisorComprobante
     }
 
     public function emitirAnulacion(Venta $venta, Comprobante $original, string $motivo): Comprobante
+    {
+        $this->verificarDisponible();
+    }
+
+    public function emitirNotaCredito(Devolucion $devolucion): Comprobante
     {
         $this->verificarDisponible();
     }

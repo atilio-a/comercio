@@ -22,8 +22,24 @@ class VentaPolicy
         return $user->can(Permiso::VentasVender->value) && $venta->esPropiaDe($user);
     }
 
+    /**
+     * Una venta con devoluciones no se anula: la anulación revertiría también lo ya devuelto.
+     */
     public function anular(User $user, Venta $venta): bool
     {
-        return $user->can(Permiso::VentasAnular->value) && ! $venta->estaAnulada();
+        return $user->can(Permiso::VentasAnular->value)
+            && ! $venta->estaAnulada()
+            && ! $venta->devoluciones()->exists();
+    }
+
+    /**
+     * Devolver o cambiar ítems (VEN-03): `ventas.devolver`, poder ver la venta y que no esté
+     * anulada. El reembolso en dinero exige además `ventas.reembolsar`.
+     */
+    public function devolver(User $user, Venta $venta): bool
+    {
+        return $user->can(Permiso::VentasDevolver->value)
+            && ! $venta->estaAnulada()
+            && $this->view($user, $venta);
     }
 }

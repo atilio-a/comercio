@@ -10,12 +10,14 @@ enum TipoComprobante: string
 {
     case VentaInterna = 'venta_interna';
     case AnulacionInterna = 'anulacion_interna';
+    case NotaCreditoInterna = 'nota_credito_interna';
 
     public function etiqueta(): string
     {
         return match ($this) {
             self::VentaInterna => 'Comprobante interno de venta',
             self::AnulacionInterna => 'Comprobante interno de anulación',
+            self::NotaCreditoInterna => 'Nota de crédito interna',
         };
     }
 }

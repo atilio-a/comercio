@@ -48,7 +48,9 @@
     <nav class="acciones" aria-label="Acciones del comprobante">
         <button type="button" onclick="window.print()">Imprimir o guardar PDF</button>
         <a href="{{ route('comprobantes.show', [$comprobante, 'formato' => $esTicket ? 'a4' : 'ticket']) }}">Ver en {{ $esTicket ? 'A4' : 'ticket' }}</a>
-        @if ($comprobante->venta_id)
+        @if ($comprobante->devolucion_id)
+            <a href="{{ route('ventas.devoluciones.show', $comprobante->devolucion_id) }}">Volver a la devolución</a>
+        @elseif ($comprobante->venta_id)
             <a href="{{ route('ventas.show', $comprobante->venta_id) }}">Volver a la venta</a>
         @endif
     </nav>
@@ -66,6 +68,16 @@
             <p class="anulacion">
                 Anula el comprobante N° {{ $datos['anula']['numero_completo'] }} del {{ \Illuminate\Support\Carbon::parse($datos['anula']['fecha'])->format('d/m/Y') }}.
                 Motivo: {{ $datos['motivo'] }}
+            </p>
+        @endisset
+
+        @isset($datos['devolucion'])
+            <p class="tenue">
+                Devolución N° {{ $datos['devolucion']['id'] }} · {{ $datos['devolucion']['resolucion'] }}<br>
+                Motivo: {{ $datos['devolucion']['motivo'] }}
+                @if (! empty($datos['referencia']))
+                    <br>Comprobante de venta: {{ $datos['referencia']['numero_completo'] }} del {{ \Illuminate\Support\Carbon::parse($datos['referencia']['fecha'])->format('d/m/Y') }}
+                @endif
             </p>
         @endisset
 
@@ -139,7 +151,7 @@
         </section>
 
         <section class="bloque">
-            <p><strong>Pagos</strong></p>
+            <p><strong>{{ isset($datos['devolucion']) ? 'Reintegro' : 'Pagos' }}</strong></p>
             <table>
                 <tbody>
                     @foreach ($datos['pagos'] as $pago)

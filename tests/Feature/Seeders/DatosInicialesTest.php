@@ -33,16 +33,16 @@ class DatosInicialesTest extends TestCase
             Permission::pluck('name')->all(),
         );
         $this->assertEqualsCanonicalizing(
-            ['usuarios.ver', 'auditoria.ver', 'catalogo.ver', 'catalogo.gestionar', 'stock.ver', 'stock.ajustar', 'caja.operar', 'caja.supervisar', 'compras.ver', 'compras.gestionar', 'compras.recibir', 'clientes.ver', 'clientes.gestionar', 'cuentas_corrientes.ver', 'ventas.vender', 'ventas.ver_todas', 'ventas.autorizar_descuentos', 'ventas.anular'],
+            ['usuarios.ver', 'auditoria.ver', 'catalogo.ver', 'catalogo.gestionar', 'stock.ver', 'stock.ajustar', 'caja.operar', 'caja.supervisar', 'compras.ver', 'compras.gestionar', 'compras.recibir', 'clientes.ver', 'clientes.gestionar', 'cuentas_corrientes.ver', 'ventas.vender', 'ventas.ver_todas', 'ventas.autorizar_descuentos', 'ventas.anular', 'ventas.devolver', 'ventas.reembolsar'],
             Role::findByName(Rol::Gerente->value)->permissions->pluck('name')->all(),
         );
 
         $this->assertEqualsCanonicalizing(
-            ['catalogo.ver', 'stock.ver', 'caja.operar', 'clientes.ver', 'clientes.gestionar', 'ventas.vender'],
+            ['catalogo.ver', 'stock.ver', 'caja.operar', 'clientes.ver', 'clientes.gestionar', 'ventas.vender', 'ventas.devolver'],
             Role::findByName(Rol::Vendedor->value)->permissions->pluck('name')->all(),
         );
         $this->assertEqualsCanonicalizing(
-            ['catalogo.ver', 'stock.ver', 'caja.operar', 'clientes.ver', 'clientes.gestionar', 'cuentas_corrientes.ver', 'ventas.vender', 'ventas.ver_todas'],
+            ['catalogo.ver', 'stock.ver', 'caja.operar', 'clientes.ver', 'clientes.gestionar', 'cuentas_corrientes.ver', 'ventas.vender', 'ventas.ver_todas', 'ventas.devolver'],
             Role::findByName(Rol::Cajero->value)->permissions->pluck('name')->all(),
         );
 

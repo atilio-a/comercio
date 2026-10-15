@@ -224,6 +224,16 @@ class Venta extends Model
     }
 
     /**
+     * Devoluciones de ítems de la venta.
+     *
+     * @return HasMany<Devolucion, $this>
+     */
+    public function devoluciones(): HasMany
+    {
+        return $this->hasMany(Devolucion::class);
+    }
+
+    /**
      * Comprobante emitido al anularla, si fue anulada.
      *
      * @return HasOne<Comprobante, $this>

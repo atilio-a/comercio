@@ -238,7 +238,7 @@ class Ventas
      * Anula la venta por reversión (VEN-05): reingresa el stock, contraasienta caja y cuenta
      * corriente, emite el comprobante de anulación y marca la venta. No borra nada.
      *
-     * @throws VentaRechazada si ya está anulada o su sesión de caja está cerrada.
+     * @throws VentaRechazada si ya está anulada, tiene devoluciones o su sesión de caja está cerrada.
      * @throws StockInsuficiente
      */
     public function anular(Venta $venta, string $motivo): Venta
@@ -256,6 +256,10 @@ class Ventas
 
             if ($venta->estaAnulada()) {
                 throw new VentaRechazada("La venta N° {$venta->id} ya está anulada.", 'motivo');
+            }
+
+            if ($venta->devoluciones()->exists()) {
+                throw new VentaRechazada("La venta N° {$venta->id} tiene devoluciones: no se puede anular.", 'motivo');
             }
 
             if ($venta->caja_sesion_id && ! CajaSesion::query()->findOrFail($venta->caja_sesion_id)->estaAbierta()) {
@@ -387,7 +391,7 @@ class Ventas
                 'precio_final' => (string) $variante->precio_final,
                 'alicuota' => (string) $variante->producto->alicuotaIva->porcentaje,
                 'cantidad' => $item['cantidad'],
-                'descuento' => $item['descuento'],
+                'descuento' => $item['descuento'] ?? '0',
             ];
         }, $items);
     }
